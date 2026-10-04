@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="الحساب الرئيسي"
+            android:textSize="14sp"
+            android:textStyle="bold" android:textColor="#EBADC6" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAR"
+            android:textSize="11sp"
+            android:textColor="@color/widget_text_secondary" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="125,000.00"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_primary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="9dp"
+        android:background="@color/widget_divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الدخل" android:textSize="10sp" android:textColor="@color/widget_text_secondary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+150,000.00" android:textSize="13sp" android:textStyle="bold" android:textColor="@color/widget_income" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="المصروفات" android:textSize="10sp" android:textColor="@color/widget_text_secondary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-25,000.00" android:textSize="13sp" android:textStyle="bold" android:textColor="@color/widget_expense" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="آخر العمليات"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="2dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="راتب الشهر" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+150,000" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_income" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="غداء" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-2,500" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_expense" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="سيارة أجرة" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-1,000" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_expense" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="+ إضافة عملية"
+        android:textSize="12sp"
+        android:textColor="@color/widget_accent"
+        android:background="@drawable/widget_button_bg" />
+</LinearLayout>

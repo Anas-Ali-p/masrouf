@@ -1,0 +1,9 @@
+{
+  "@@locale": "ar",
+  "appTitle": "تطبيقي",
+  "login": "تسجيل الدخول",
+  "greeting": "مرحبا، {name}",
+  "@greeting": {
+    "placeholders": { "name": { "type": "String" } }
+  }
+}

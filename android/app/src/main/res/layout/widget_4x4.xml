@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/account_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_text_primary"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/account_currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/widget_text_secondary" />
+    </LinearLayout>
+
+    <!-- Balance -->
+    <TextView
+        android:id="@+id/account_balance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_primary"
+        android:maxLines="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="9dp"
+        android:background="@color/widget_divider" />
+
+    <!-- Summary -->
+    <include layout="@layout/widget_summary_row" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="آخر العمليات"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_secondary" />
+
+    <!-- Recent transactions -->
+    <LinearLayout
+        android:id="@+id/transactions_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="2dp"
+        android:orientation="vertical" />
+
+    <!-- Add transaction action -->
+    <TextView
+        android:id="@+id/quick_add_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="+ إضافة عملية"
+        android:textSize="12sp"
+        android:textColor="@color/widget_accent"
+        android:background="@drawable/widget_button_bg" />
+</LinearLayout>
