@@ -1,24 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:masrouf_v2/core/widgets/nav/app_bottom_nav_bar.dart';
 import 'package:masrouf_v2/core/widgets/nav/app_bottom_nav_items.dart';
+import 'package:masrouf_v2/providers/app_providers.dart';
 import 'package:masrouf_v2/screens/add_transaction/add_transaction_sheet.dart';
 import 'package:masrouf_v2/screens/home/home_screen.dart';
 import 'package:masrouf_v2/screens/reports/reports_screen.dart';
 import 'package:masrouf_v2/screens/settings/settings_screen.dart';
 import 'package:masrouf_v2/screens/transactions/transactions_screen.dart';
-import 'package:masrouf_v2/theme/app_sizes.dart';
-import 'package:masrouf_v2/theme/theme_context.dart';
 import 'package:masrouf_v2/utils/app_snackbar.dart';
+import 'package:masrouf_v2/utils/data_backup.dart';
 
-class MainShell extends StatefulWidget {
+class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
   @override
-  State<MainShell> createState() => _MainShellState();
+  ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends ConsumerState<MainShell>
+    with WidgetsBindingObserver {
   int _currentIndex = AppNavDestination.home.index;
 
   /// Timestamp of the last back press on Home, used for double-back-to-exit.
@@ -27,12 +31,50 @@ class _MainShellState extends State<MainShell> {
   /// Window in which a second back press counts as "exit".
   static const _exitWindow = Duration(seconds: 2);
 
+  Timer? _automaticBackupTimer;
+
   static const List<Widget> _pages = [
     HomeScreen(),
     TransactionsScreen(),
     ReportsScreen(),
     SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _runAutomaticBackup();
+    });
+    _automaticBackupTimer = Timer.periodic(
+      const Duration(minutes: 30),
+      (_) => _runAutomaticBackup(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _automaticBackupTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _runAutomaticBackup();
+    }
+  }
+
+  Future<void> _runAutomaticBackup() async {
+    try {
+      await DataBackup.createDailyBackup(ref.read(databaseProvider));
+    } catch (e, stackTrace) {
+      debugPrint('[AUTO BACKUP] error: $e');
+      debugPrint('[AUTO BACKUP STACK] $stackTrace');
+    }
+  }
 
   bool get _isHome => _currentIndex == AppNavDestination.home.index;
 
@@ -61,9 +103,6 @@ class _MainShellState extends State<MainShell> {
   }
 
   void _showExitHint() {
-    final tokens = context.tokens;
-    final colors = context.colors;
-
     showAppSnack(
       context,
       message: 'اضغط مرة أخرى للخروج',

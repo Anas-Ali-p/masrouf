@@ -7,7 +7,7 @@ import 'package:masrouf_v2/services/widget_service.dart';
 import 'package:masrouf_v2/theme/app_sizes.dart';
 import 'package:masrouf_v2/theme/theme_context.dart';
 
-const _widgetChannel = MethodChannel('com.example.masrouf_v2/widget_config');
+const _widgetChannel = MethodChannel('com.prettysoft.masrouf/widget_config');
 
 Future<bool?> showWidgetAccountPickerSheet(
   BuildContext context, {
@@ -64,10 +64,7 @@ class _WidgetAccountPickerScreenState
     } catch (_) {}
   }
 
-  Future<void> _selectAccount(
-    Account account,
-    List<Account> accounts,
-  ) async {
+  Future<void> _selectAccount(Account account, List<Account> accounts) async {
     if (_saving) return;
     setState(() => _saving = true);
 
@@ -233,7 +230,9 @@ class _WidgetAccountPickerScreenState
                       final account = accounts[i];
                       return _AccountTile(
                         account: account,
-                        onTap: _saving ? null : () => _selectAccount(account, accounts),
+                        onTap: _saving
+                            ? null
+                            : () => _selectAccount(account, accounts),
                       );
                     },
                   );

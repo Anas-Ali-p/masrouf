@@ -1,4 +1,4 @@
-package com.example.masrouf_v2
+package com.prettysoft.masrouf
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
 open class MainActivity : FlutterActivity() {
 
     companion object {
-        private const val CHANNEL = "com.example.masrouf_v2/widget_config"
+        private const val CHANNEL = "com.prettysoft.masrouf/widget_config"
         private const val WIDGET_PREFERENCES = "HomeWidgetPreferences"
         private const val WIDGET_STATE_KEY = "widget_state_v2"
         private val widgetStorageExecutor = Executors.newSingleThreadExecutor()
@@ -128,7 +128,7 @@ open class MainActivity : FlutterActivity() {
             AppWidgetManager.INVALID_APPWIDGET_ID
         }
 
-        widgetActionAccountId = if (action == "com.example.masrouf_v2.WIDGET_ADD") {
+        widgetActionAccountId = if (action == "com.prettysoft.masrouf.WIDGET_ADD") {
             intent.getStringExtra("accountId")?.takeIf { it.isNotEmpty() }
         } else {
             null

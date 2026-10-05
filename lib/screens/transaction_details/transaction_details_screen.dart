@@ -13,8 +13,8 @@ import 'package:masrouf_v2/screens/transaction_details/widgets/notes_card.dart';
 import 'package:masrouf_v2/screens/transaction_details/widgets/quick_info_row.dart';
 import 'package:masrouf_v2/theme/app_sizes.dart';
 import 'package:masrouf_v2/theme/theme_context.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masrouf_v2/providers/app_providers.dart';
+import 'package:masrouf_v2/services/widget_service.dart';
 
 class TransactionDetailsScreen extends ConsumerWidget {
   const TransactionDetailsScreen({super.key, required this.detail});
@@ -100,6 +100,18 @@ class TransactionDetailsScreen extends ConsumerWidget {
 
     try {
       await ref.read(transactionRepositoryProvider).deleteTransaction(tx.id);
+
+      try {
+        final accounts = await ref
+            .read(accountRepositoryProvider)
+            .watchAll()
+            .first;
+        await WidgetService.updateAllWidgets(accounts: accounts);
+      } catch (widgetError, widgetStack) {
+        debugPrint(
+          '[WidgetService] transaction delete sync failed: $widgetError\n$widgetStack',
+        );
+      }
 
       if (!context.mounted) return;
 

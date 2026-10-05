@@ -16,6 +16,7 @@ import 'package:masrouf_v2/screens/add_transaction/widgets/category_picker_sheet
 import 'package:masrouf_v2/screens/add_transaction/widgets/compact_chip.dart';
 import 'package:masrouf_v2/screens/add_transaction/widgets/type_selector.dart';
 import 'package:masrouf_v2/screens/settings/screens/exchange_rates_screen.dart';
+import 'package:masrouf_v2/services/widget_service.dart';
 import 'package:masrouf_v2/theme/app_sizes.dart';
 import 'package:masrouf_v2/theme/theme_context.dart';
 import 'package:masrouf_v2/utils/thousands_formatter.dart';
@@ -461,6 +462,21 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
         await repo.updateTransaction(tx);
       }
 
+      // Keep installed Android widgets synchronized with the database.
+      // Widget refresh must never turn a successful transaction into a
+      // perceived save failure, so sync errors are isolated.
+      try {
+        final accounts = await ref
+            .read(accountRepositoryProvider)
+            .watchAll()
+            .first;
+        await WidgetService.updateAllWidgets(accounts: accounts);
+      } catch (widgetError, widgetStack) {
+        debugPrint(
+          '[WidgetService] transaction sync failed: $widgetError\n$widgetStack',
+        );
+      }
+
       // ── Success ───────────────────────────────────────
       if (!mounted) return;
       Navigator.pop(context, true);
@@ -601,7 +617,11 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
               const SizedBox(height: 12),
 
               // ── Amount ────────────────────────────────
-              AmountField(controller: _amountController, type: _draft.type),
+              AmountField(
+                controller: _amountController,
+                type: _draft.type,
+                currency: sourceAccount?.currency ?? 'SAR',
+              ),
               AmountInWords(
                 amount: _draft.amount,
                 currency: sourceAccount != null

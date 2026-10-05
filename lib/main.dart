@@ -26,10 +26,9 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsAsync = ref.watch(appSettingsProvider);
-    final themeMode = settingsAsync.maybeWhen(
-      data: (s) => s.themeMode,
-      orElse: () => ThemeMode.system,
-    );
+    final settings = settingsAsync.valueOrNull;
+    final themeMode = settings?.themeMode ?? ThemeMode.system;
+    final themeId = settings?.themeId ?? AppThemeId.defaultTheme;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -40,8 +39,8 @@ class MyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.light(themeId: themeId),
+      darkTheme: AppTheme.dark(themeId: themeId),
       themeMode: themeMode,
       home: const MainShell(),
     );

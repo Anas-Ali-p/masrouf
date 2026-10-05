@@ -16,7 +16,7 @@
             android:layout_weight="1"
             android:text="الحساب الرئيسي"
             android:textSize="14sp"
-            android:textStyle="bold" android:textColor="#EBADC6" />
+            android:textStyle="bold" android:textColor="@color/widget_text_primary" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,10 +34,11 @@
         android:textStyle="bold"
         android:textColor="@color/widget_text_primary" />
 
-    <View
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginVertical="9dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"
         android:background="@color/widget_divider" />
 
     <LinearLayout
@@ -68,15 +69,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="2dp">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="4dp" android:paddingBottom="4dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="راتب الشهر" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+150,000" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_income" />
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="4dp" android:paddingBottom="4dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="غداء" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-2,500" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_expense" />
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="4dp" android:paddingBottom="4dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="سيارة أجرة" android:textSize="10sp" android:textColor="@color/widget_text_primary" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-1,000" android:textSize="10sp" android:textStyle="bold" android:textColor="@color/widget_expense" />
         </LinearLayout>

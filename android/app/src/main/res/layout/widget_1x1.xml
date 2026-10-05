@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:layoutDirection="rtl"
     android:padding="4dp"
     android:background="@drawable/widget_background">
 
@@ -13,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textDirection="rtl"
         android:textSize="9sp"
         android:textColor="@color/widget_text_secondary"
         android:maxLines="1"

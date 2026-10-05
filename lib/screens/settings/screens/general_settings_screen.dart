@@ -9,17 +9,27 @@ import 'package:masrouf_v2/screens/settings/widgets/settings_card.dart';
 import 'package:masrouf_v2/screens/settings/widgets/settings_divider.dart';
 import 'package:masrouf_v2/screens/settings/widgets/settings_tile.dart';
 import 'package:masrouf_v2/screens/settings/widgets/theme_mode_sheet.dart';
+import 'package:masrouf_v2/theme/app_theme.dart';
 
 class GeneralSettingsScreen extends ConsumerWidget {
   const GeneralSettingsScreen({super.key});
 
   Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
-    final current =
-        ref.read(appSettingsProvider).valueOrNull?.themeMode ??
-        ThemeMode.system;
-    final result = await showThemeModeSheet(context, current: current);
+    final settings = ref.read(appSettingsProvider).valueOrNull;
+    final currentMode = settings?.themeMode ?? ThemeMode.system;
+    final currentTheme = settings?.themeId ?? AppThemeId.defaultTheme;
+    final result = await showThemeModeSheet(
+      context,
+      currentTheme: currentTheme,
+      currentMode: currentMode,
+    );
     if (result != null) {
-      await ref.read(appSettingsProvider.notifier).setThemeMode(result);
+      await ref
+          .read(appSettingsProvider.notifier)
+          .setThemeSettings(
+            themeId: result.themeId,
+            themeMode: result.themeMode,
+          );
     }
   }
 
@@ -61,8 +71,8 @@ class GeneralSettingsScreen extends ConsumerWidget {
                   children: [
                     SettingsTile(
                       icon: Icons.brightness_6_rounded,
-                      title: 'المظهر',
-                      subtitle: 'اختر بين الفاتح والداكن',
+                      title: 'الثيم',
+                      subtitle: 'الثيم ونمط الإضاءة',
                       trailingText: settings.themeLabel,
                       onTap: () => _pickTheme(context, ref),
                     ),

@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masrouf_v2/data/repositories/settings_repository.dart';
 import 'package:masrouf_v2/providers/app_providers.dart';
+import 'package:masrouf_v2/theme/app_theme.dart';
+import 'package:masrouf_v2/services/widget_service.dart';
 
 @immutable
 class AppSettingsState {
   const AppSettingsState({
     this.themeMode = ThemeMode.system,
+    this.themeId = AppThemeId.defaultTheme,
     this.currency = 'SAR',
     this.currencyLabel = 'ريال سعودي',
     this.language = 'العربية',
@@ -21,6 +26,7 @@ class AppSettingsState {
   });
 
   final ThemeMode themeMode;
+  final AppThemeId themeId;
   final String currency;
   final String currencyLabel;
   final String language;
@@ -38,7 +44,15 @@ class AppSettingsState {
   /// Hashed app PIN. Null when no lock is configured.
   final String? appPin;
 
-  String get themeLabel => switch (themeMode) {
+  String get themeLabel => '${themeName} • ${themeModeLabel}';
+
+  String get themeName => switch (themeId) {
+    AppThemeId.defaultTheme => 'الافتراضي',
+    AppThemeId.themeColors => 'theme-colors',
+    AppThemeId.goldenTheme => 'golden-theme',
+  };
+
+  String get themeModeLabel => switch (themeMode) {
     ThemeMode.system => 'تلقائي',
     ThemeMode.light => 'فاتح',
     ThemeMode.dark => 'داكن',
@@ -57,6 +71,7 @@ class AppSettingsState {
 
   AppSettingsState copyWith({
     ThemeMode? themeMode,
+    AppThemeId? themeId,
     String? currency,
     String? currencyLabel,
     String? language,
@@ -71,6 +86,7 @@ class AppSettingsState {
     bool clearPin = false,
   }) => AppSettingsState(
     themeMode: themeMode ?? this.themeMode,
+    themeId: themeId ?? this.themeId,
     currency: currency ?? this.currency,
     currencyLabel: currencyLabel ?? this.currencyLabel,
     language: language ?? this.language,
@@ -90,8 +106,9 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettingsState> {
 
   @override
   Future<AppSettingsState> build() async {
-    return AppSettingsState(
+    final settings = AppSettingsState(
       themeMode: await _repo.getThemeMode(),
+      themeId: await _repo.getThemeId(),
       currency: await _repo.getCurrency(),
       currencyLabel: await _repo.getCurrencyLabel(),
       language: await _repo.getLanguage(),
@@ -103,6 +120,9 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettingsState> {
       notifWeekly: await _repo.getNotifWeekly(),
       exchangeRates: await _repo.getExchangeRates(),
     );
+
+    unawaited(_syncWidgetTheme(settings.themeId, settings.themeMode));
+    return settings;
   }
 
   Future<void> setCurrency(String code, String label) async {
@@ -128,7 +148,35 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettingsState> {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     await _repo.setThemeMode(mode);
+    final themeId = state.value?.themeId ?? AppThemeId.defaultTheme;
     state = AsyncData(state.value!.copyWith(themeMode: mode));
+    await _syncWidgetTheme(themeId, mode);
+  }
+
+  Future<void> setThemeSettings({
+    required AppThemeId themeId,
+    required ThemeMode themeMode,
+  }) async {
+    await _repo.setThemeId(themeId);
+    await _repo.setThemeMode(themeMode);
+    state = AsyncData(
+      state.value!.copyWith(themeId: themeId, themeMode: themeMode),
+    );
+    await _syncWidgetTheme(themeId, themeMode);
+  }
+
+  Future<void> _syncWidgetTheme(
+    AppThemeId themeId,
+    ThemeMode themeMode,
+  ) async {
+    try {
+      await WidgetService.syncThemeColors(
+        themeId: themeId,
+        themeMode: themeMode,
+      );
+    } catch (e) {
+      // Widget theme synchronization must never break the app theme setting.
+    }
   }
 
   Future<void> setHideBalances(bool v) async {

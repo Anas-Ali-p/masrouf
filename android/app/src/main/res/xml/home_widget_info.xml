@@ -9,5 +9,6 @@
     android:previewLayout="@layout/widget_preview_tiny"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable"
     android:description="@string/widget_description"
-    android:configure="com.example.masrouf_v2.WidgetConfigActivity" />
+    android:configure="com.prettysoft.masrouf.WidgetConfigActivity" />

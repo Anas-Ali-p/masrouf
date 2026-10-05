@@ -49,7 +49,7 @@ class TypeSelector extends StatelessWidget {
       builder: (context, constraints) {
         // Width of one thumb. Subtract the outer 4px padding on each
         // side, then divide evenly by the number of segments.
-        final innerWidth = constraints.maxWidth - 8;
+        final innerWidth = (constraints.maxWidth - 8).clamp(0.0, double.infinity);
         final thumbWidth = innerWidth / items.length;
 
         return Container(

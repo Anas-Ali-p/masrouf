@@ -1,4 +1,4 @@
-package com.example.masrouf_v2
+package com.prettysoft.masrouf
 
 import android.app.Application
 import io.flutter.embedding.engine.FlutterEngineGroup

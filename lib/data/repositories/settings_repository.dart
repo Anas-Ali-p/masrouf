@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:masrouf_v2/theme/app_theme.dart';
 
 class SettingsRepository {
   static const _themeKey = 'themeMode';
+  static const _themeIdKey = 'themeId';
   static const _currencyKey = 'currency';
   static const _currencyLabelKey = 'currencyLabel';
   static const _languageKey = 'language';
@@ -32,6 +34,16 @@ class SettingsRepository {
   Future<void> setThemeMode(ThemeMode mode) async {
     final p = await _prefs;
     await p.setString(_themeKey, mode.name);
+  }
+
+  Future<AppThemeId> getThemeId() async {
+    final p = await _prefs;
+    return AppThemeId.fromStorage(p.getString(_themeIdKey));
+  }
+
+  Future<void> setThemeId(AppThemeId themeId) async {
+    final p = await _prefs;
+    await p.setString(_themeIdKey, themeId.storageName);
   }
 
   // Currency

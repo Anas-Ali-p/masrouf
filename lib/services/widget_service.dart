@@ -5,12 +5,13 @@ import 'package:home_widget/home_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:masrouf_v2/models/account.dart';
+import 'package:masrouf_v2/theme/app_theme.dart';
 
 class WidgetService {
   static const String providerName = 'HomeWidgetProvider';
   static const String _stateKey = 'widget_state_v2';
   static const MethodChannel _channel = MethodChannel(
-    'com.example.masrouf_v2/widget_config',
+    'com.prettysoft.masrouf/widget_config',
   );
 
   /// Stores the widget/account binding and current account cache in one payload.
@@ -34,11 +35,13 @@ class WidgetService {
     }
 
     widgets['$widgetId'] = account.id;
+    _removeBindingsForMissingAccounts(widgets, accounts);
 
     final payload = <String, dynamic>{
       'version': 2,
       'widgets': widgets,
       'accounts': _buildAccountCache(accounts, widgets.values),
+      if (state['theme'] != null) 'theme': state['theme'],
     };
 
     await _writeState(payload);
@@ -51,24 +54,71 @@ class WidgetService {
   }) async {
     final state = await _readState();
     final widgets = _asStringMap(state['widgets']);
+    final legacyWidgets = await _readLegacyWidgets();
 
-    if (widgets.isEmpty) {
-      final legacyWidgets = await _readLegacyWidgets();
-      widgets.addAll(legacyWidgets);
+    // Merge legacy bindings even when v2 already contains other instances.
+    for (final entry in legacyWidgets.entries) {
+      widgets.putIfAbsent(entry.key, () => entry.value);
     }
 
     if (widgets.isEmpty) {
       return;
     }
 
+    // A deleted/archived account must not leave an actionable widget pointing
+    // at an account that no longer exists. The widget can remain placed, but
+    // it becomes an unconfigured placeholder until the user reconfigures it.
+    _removeBindingsForMissingAccounts(widgets, accounts);
+
     final payload = <String, dynamic>{
       'version': 2,
       'widgets': widgets,
       'accounts': _buildAccountCache(accounts, widgets.values),
+      if (state['theme'] != null) 'theme': state['theme'],
     };
 
     await _writeState(payload);
     await HomeWidget.updateWidget(androidName: providerName);
+  }
+
+
+  static int _toAndroidColor(Color color) {
+    final value = color.toARGB32();
+    return value > 0x7FFFFFFF ? value - 0x100000000 : value;
+  }
+
+  /// Synchronizes only the widget background/text colors with the app theme.
+  /// The XML/layout structure remains unchanged.
+  static Future<void> syncThemeColors({
+    required AppThemeId themeId,
+    required ThemeMode themeMode,
+  }) async {
+    final brightness = switch (themeMode) {
+      ThemeMode.light => Brightness.light,
+      ThemeMode.dark => Brightness.dark,
+      ThemeMode.system => WidgetsBinding.instance.platformDispatcher.platformBrightness,
+    };
+
+    final theme = brightness == Brightness.dark
+        ? AppTheme.dark(themeId: themeId)
+        : AppTheme.light(themeId: themeId);
+
+    final state = await _readState();
+    state['theme'] = <String, Object>{
+      'background': _toAndroidColor(theme.colorScheme.surface),
+      'text': _toAndroidColor(theme.colorScheme.onSurface),
+    };
+
+    await _writeState(state);
+    await HomeWidget.updateWidget(androidName: providerName);
+  }
+
+  static void _removeBindingsForMissingAccounts(
+    Map<String, String> widgets,
+    List<Account> accounts,
+  ) {
+    final accountIds = accounts.map((account) => account.id).toSet();
+    widgets.removeWhere((_, accountId) => !accountIds.contains(accountId));
   }
 
   static Map<String, dynamic> _buildAccountCache(
@@ -81,10 +131,10 @@ class WidgetService {
       for (final account in accounts)
         if (ids.contains(account.id))
           account.id: <String, dynamic>{
-          'name': account.name,
-          'balance': NumberFormat('#,##0.00', 'en').format(account.balance),
-          'currency': account.currency,
-        },
+            'name': account.name,
+            'balance': NumberFormat('#,##0.00', 'en').format(account.balance),
+            'currency': account.currency,
+          },
     };
   }
 
@@ -105,9 +155,7 @@ class WidgetService {
 
     try {
       final decoded = jsonDecode(raw);
-      return decoded is Map<String, dynamic>
-          ? decoded
-          : <String, dynamic>{};
+      return decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
     } catch (e) {
       debugPrint('[WidgetService] invalid widget state: $e');
       return <String, dynamic>{};
@@ -141,9 +189,7 @@ class WidgetService {
   static Future<void> _writeState(Map<String, dynamic> state) async {
     final ok = await _channel.invokeMethod<bool>(
       'saveWidgetState',
-      <String, Object>{
-        'state': jsonEncode(state),
-      },
+      <String, Object>{'state': jsonEncode(state)},
     );
 
     if (ok != true) {

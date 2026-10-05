@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:masrouf_v2/core/widgets/color_picker/color_picker.dart';
 import 'package:masrouf_v2/models/account.dart';
 import 'package:masrouf_v2/providers/app_providers.dart';
+import 'package:masrouf_v2/services/widget_service.dart';
 import 'package:masrouf_v2/theme/app_motion.dart';
 import 'package:masrouf_v2/theme/app_sizes.dart';
 import 'package:masrouf_v2/theme/theme_context.dart';
@@ -243,6 +244,19 @@ class _AddAccountSheetState extends ConsumerState<_AddAccountSheet> {
 
     try {
       await ref.read(accountRepositoryProvider).delete(existing.id);
+
+      try {
+        final accounts = await ref
+            .read(accountRepositoryProvider)
+            .watchAll()
+            .first;
+        await WidgetService.updateAllWidgets(accounts: accounts);
+      } catch (widgetError, widgetStack) {
+        debugPrint(
+          '[WidgetService] account delete sync failed: $widgetError\n$widgetStack',
+        );
+      }
+
       if (!mounted) return;
       Navigator.pop(context, true);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -297,6 +311,15 @@ class _AddAccountSheetState extends ConsumerState<_AddAccountSheet> {
         await repo.insert(account);
       } else {
         await repo.update(account);
+      }
+
+      try {
+        final accounts = await repo.watchAll().first;
+        await WidgetService.updateAllWidgets(accounts: accounts);
+      } catch (widgetError, widgetStack) {
+        debugPrint(
+          '[WidgetService] account save sync failed: $widgetError\n$widgetStack',
+        );
       }
 
       if (!mounted) return;

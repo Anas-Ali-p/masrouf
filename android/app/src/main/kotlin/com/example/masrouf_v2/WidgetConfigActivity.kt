@@ -1,4 +1,4 @@
-package com.example.masrouf_v2
+package com.prettysoft.masrouf
 
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs
 
@@ -32,7 +32,7 @@ class WidgetConfigActivity : MainActivity() {
                 listOf("config", widgetId.toString())
             }
 
-            "com.example.masrouf_v2.WIDGET_ADD" -> {
+            "com.prettysoft.masrouf.WIDGET_ADD" -> {
                 val accountId = intent?.getStringExtra("accountId")
 
                 listOf("action", accountId.orEmpty())
